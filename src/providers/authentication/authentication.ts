@@ -4,6 +4,7 @@ import 'rxjs/add/operator/map';
 import {Observable} from 'rxjs/Observable';
 
 import {AngularFireAuth} from 'angularfire2/auth'
+import * as firebase from "firebase";
 
 //import * as firebase from 'firebase/app';
 
@@ -44,6 +45,22 @@ export class AuthenticationProvider {
           reject(error);
         });
     });
+  }
+
+  signupUser(email: string, password: string): Promise<any> {
+    return firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then( newUser => {
+        firebase
+          .database()
+          .ref('/userProfile')
+          .child(newUser.uid)
+          .set({ email: email });
+      });
+  }
+  resetPassword(email: string): Promise<void> {
+    return firebase.auth().sendPasswordResetEmail(email);
   }
 
 

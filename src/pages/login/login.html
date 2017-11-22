@@ -1,7 +1,7 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      Ionic Fire
+      Cars Stock
       <ion-buttons end>
         <button
           *ngIf="!displayForm"
@@ -15,45 +15,57 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content class="center">
 
 
   <form
     *ngIf="displayForm"
     [formGroup]="form"
     (ngSubmit)="logIn()">
-    <ion-list>
-      <ion-item margin-bottom>
-        <ion-label>Mail Address</ion-label>
-        <ion-input
-          type="text"
-          formControlName="email"></ion-input>
+
+
+      <ion-item >
+
+
+        <ion-label color="primary" floating>Email</ion-label>
+        <ion-input   type="email"
+                     formControlName="email" [class.invalid]="!form.controls.email.valid && blur">
+
+        </ion-input>
+
       </ion-item>
 
 
-      <ion-item margin-bottom>
-        <ion-label>Password</ion-label>
+      <ion-item>
+        <ion-label color="primary" floating>Password</ion-label>
         <ion-input
           type="password"
-          formControlName="password"></ion-input>
+          formControlName="password" [class.invalid]="!form.controls.password.valid && blur"></ion-input>
       </ion-item>
 
 
       <button
-        ion-button
+        ion-button round
         color="primary"
         text-center
         block [disabled]="!form.valid">Log In</button>
-    </ion-list>
 
-    <p>{{ displayError }}</p>
+
+    <!--<p>{{ displayError }}</p>-->
   </form>
 
+  <button ion-button block clear (click)="goToSignup()">
+    Create a new account
+  </button>
+
+  <button ion-button block clear (click)="goToResetPwd()">
+    I forgot my password
+  </button>
 
 
-  <div *ngIf="!displayForm">
+ <!-- <div *ngIf="!displayForm">
     <h1 *ngIf="_AUTH.user | async">Welcome {{ (_AUTH.user | async)?.email }}!</h1>
     <p>Logged in bro!</p>
-  </div>
+  </div>-->
 
 </ion-content>

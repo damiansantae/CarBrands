@@ -1,0 +1,55 @@
+<ion-header>
+
+  <ion-navbar color="primary">
+    <ion-buttons end *ngIf="selectedBrand != null">
+      <button ion-button (click)="removeSelectedBrand()">
+        <ion-icon name="trash"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title>Car Brands</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content padding>
+  <ion-refresher (ionRefresh)="refreshBrands($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ion-list>
+    <ion-card
+      class="brand"
+      text-wrap
+      *ngFor="let brand of brandService.brands" (tap)="goToBrand(brand)"
+      (press)="selectBrand(brand)" [ngClass]="{'selected-brand': selectedBrand === brand}">
+      <ion-item>
+        <h2>{{ brand.name }}</h2>
+
+      </ion-item>
+
+
+      <div class="manage-record" padding>
+        <button
+          ion-button
+          text-center
+          color="primary">
+          <!--(click)=""
+          -->Edit
+        </button>
+
+        <button
+          ion-button
+          text-center
+          color="danger"
+          (click)="brandService.removeBrand(brand)">Delete</button>
+      </div>
+    </ion-card>
+  </ion-list>
+
+  <ion-fab bottom right>
+    <button ion-fab (click)="showAddBrand()">
+      <ion-icon name="add"></ion-icon>
+    </button>
+  </ion-fab>
+</ion-content>
+
+
