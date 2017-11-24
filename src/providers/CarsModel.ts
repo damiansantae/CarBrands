@@ -1,10 +1,10 @@
 export class CarsModel {
   constructor(public name: string,
-              public brandId: number,
+              public brandId: string,
               public seen: boolean = false,
               public type: string,
               public image: string,
-              public id: number = 0,) {
+              public id: string = "0",) {
   }
 
   static clone(car: CarsModel) {

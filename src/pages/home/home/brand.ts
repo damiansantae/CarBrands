@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
-import {AlertController, LoadingController, ModalController, NavController, NavParams, Refresher} from 'ionic-angular';
+import {
+  AlertController, LoadingController, ModalController, NavController, NavParams, Refresher,
+  Toast
+} from 'ionic-angular';
 import {BrandModel} from "../../../providers/brandModel";
 import {BrandService} from "../../../providers/brand-service";
 import {CarsPage} from "../cars/cars";
@@ -39,10 +42,13 @@ export class BrandsPage {
     loader.present().then(() => {
       this.brandService.addBrand(name, image)
         .then(item => {
+
+          console.log('añadido '+item.name+' con id '+item.id);
           //let brand = BrandModel.fromJson(item);
           //this.goToBrand(brand);
           loader.dismiss();
         }, error => {
+          console.log('error al añadir el nuevo elemento')
           loader.dismiss();
 
         });
@@ -108,6 +114,11 @@ export class BrandsPage {
 
   refreshBrands(refresher: Refresher) {
     console.log('onRefresh');
+    var deletedBrands = this.brandService.deletedBrands;
+    if(deletedBrands.length>0){
+      this.DB_FIRE.removeBrand(deletedBrands);
+      this.brandService.deletedBrands = [];
+    }
     this.brandService.getNewBrands().then(() => {
       console.log('se han obtenido satisfactoriamente los nuevos brands');
       this.DB_FIRE.addNewBrands(this.brandService.newBrands);
@@ -118,6 +129,14 @@ export class BrandsPage {
 
     });
     refresher.complete();
+
+  }
+
+  public removeBrand(brand: BrandModel){
+    this.brandService.removeBrand(brand).then(()=>{
+      console.log(brand + ' eliminado con éxito');
+
+    })
 
   }
 }

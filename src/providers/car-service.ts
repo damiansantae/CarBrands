@@ -19,12 +19,12 @@ export class CarService {
 
   }
 
-  public loadFromBrand(id:number){
+  public loadFromBrand(id:string){
     console.log('Load from brand cuyo id es '+id);
     this.getCars(id);
   }
 
-  private getCars(id:number){
+  private getCars(id:string){
     console.log('getCars de car-service');
     return this.database.getCarsFromBrand(id)
     .then((data:any) => {
@@ -85,7 +85,7 @@ export class CarService {
   addCar(car:CarsModel){
     console.log('open add car database service to add car'+car.name+'with brandId'+car.brandId);
 
-    return this.database.addCar(car.name, car.seen, car.type,car.image, car.brandId)
+    return this.database.addCar(car.name, car.type,car.image, car.brandId)
     .then((car)=>{
       return this.getCars(car.brandId);
     })

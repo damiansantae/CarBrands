@@ -60,4 +60,16 @@ for (var key in jason){
     })
     }
   }
+  removeBrand(brands : any[]){
+
+
+    for(let brand of brands){
+      console.log('eliminando de FB el brand con id'+brand.id);
+      this.remove(brand);
+    }
+  }
+  remove(brand){
+    let database = firebase.database();
+    return database.ref('/brands/'+brand.id).remove();
+  }
 }

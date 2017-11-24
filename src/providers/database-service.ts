@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Platform } from 'ionic-angular';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import {BrandModel} from "./brandModel";
 
 
 @Injectable()
@@ -36,22 +37,22 @@ export class DatabaseService {
         id TEXT PRIMARY KEY,
         name TEXT,
         image TEXT,
+        year TEXT,
+        type TEXT,
+        info TEXT,
         isNew INTEGER
       );`
     ,{})
-    .then(()=>{
-      return this.database.executeSql(
-      `CREATE TABLE IF NOT EXISTS car (
-        id TEXT PRIMARY KEY,
-        name TEXT,
-        inStock INTEGER,
-        type TEXT,
-        image TEXT,
-        isNew INTEGER,
-        brandId TEXT,
-        FOREIGN KEY(brandId) REFERENCES brand(id)
-        );`,{} )
-    }).catch((err)=>console.log("error detected creating tables", err));
+
+      .then(()=>{
+        return this.database.executeSql(`CREATE TABLE IF NOT EXISTS users-brands (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        uid TEXT,
+        brandid TEXT,
+        FOREIGN KEY(brandid) REFERENCES brand(id)
+        );`,{})
+      })
+      .catch((err)=>console.log("error detected creating tables", err));
 
   }
 
@@ -88,10 +89,55 @@ export class DatabaseService {
       })
     })
   }
+  getBrandOfUser(uid){
+    var userBrandsId = [];
+    var userBrands = [];
+    return this.isReady()
+      .then(()=>{
+        return this.database.executeSql(`SELECT * from brand WHERE uid = '${uid}';`, [])
+          .then((data)=>{
+            let brands = [];
+            for(let i=0; i<data.rows.length; i++){
+              console.log('relacion encontrada con id '+data.id);
+              userBrandsId.push(data.rows.item(i).brandid);
+            }
+            for(let i=0; i<userBrandsId.length; i++){
+              userBrands.push(this.getBrand(userBrandsId[i]));
+            }
+            return userBrands;
+          })
+      })
+
+  }
+
+  insertSeenBrandIntoCurrentUser(brandid, uid){
+console.log('inserting brand with id '+brandid+' into seen table of user with id '+uid);
+    return this.isReady()
+      .then(()=>{
+        console.log('isReady');
+        return this.database.executeSql(`INSERT INTO users-brands(uid,brandid) VALUES ('${uid}','${brandid}');`, {}).then((result)=>{
+          if(result.insertId){
+            console.log('insertao con exito');
+          }
+        })
+      });
+  }
+  deleteSeenBrandOutoCurrentUser(brandid, uid){
+    console.log('inserting brand with id '+brandid+' into seen table of user with id '+uid);
+    return this.isReady()
+      .then(()=>{
+        console.log('isReady');
+        return this.database.executeSql(`DELETE FROM users-brands WHERE uid = '${uid}' AND brandid = '${brandid}';`, {}).then((result)=>{
+          if(result.insertId){
+            console.log('insertao con exito');
+          }
+        })
+      });
+  }
 
   addBrand(name:string, image:string){
     console.log('addBrand('+name+','+image+') database-service');
-    var uuid = this.getuid();
+    var uuid : string = this.getuid();
     console.log(uuid);
     return this.isReady()
     .then(()=>{
@@ -99,7 +145,7 @@ export class DatabaseService {
       return this.database.executeSql(`INSERT INTO brand(name,image,isNew,id) VALUES ('${name}','${image}',1,'${uuid}');`, {}).then((result)=>{
         if(result.insertId){
           console.log('insertao con exito');
-          return this.getBrand(result.insertId);
+          return this.getBrand(uuid);
         }
       })
     });
@@ -126,23 +172,31 @@ export class DatabaseService {
 
   }
 
-  getBrand(id:number){
+  getBrand(id:string){
     return this.isReady()
     .then(()=>{
-      return this.database.executeSql(`SELECT * FROM brand WHERE id = ${id}`, [])
+      return this.database.executeSql(`SELECT * FROM brand WHERE id = '${id}'`, [])
       .then((data)=>{
+
         if(data.rows.length){
-          return data.rows.item(0);
+          console.log('se ha encontrado un brand con el id solicitado');
+          let brand =data.rows.item(0);
+          console.log('se ha encontrado el brand con id '+brand.id);
+          return brand
         }
         return null;
       })
     });
   }
 
-  deleteBrand(id:number){
+  deleteBrand(id:string){
+    console.log('deleteBrand database-srvice con id'+id);
     return this.isReady()
     .then(()=>{
-      return this.database.executeSql(`DELETE FROM brand WHERE id = ${id}`, [])
+      console.log('proceed to execute sqlite delete query');
+      return this.database.executeSql(`DELETE FROM brand WHERE id = '${id}'`, [])
+
+
     })
   }
 
@@ -155,12 +209,12 @@ export class DatabaseService {
   }
 
 
-  getCarsFromBrand(brandId:number){
+  getCarsFromBrand(brandId:string){
     console.log('Tratando de extraer los coches pertenecientes a la marca cuyo id es'+brandId.valueOf());
     return this.isReady()
     .then(()=>{
       console.log('db ready');
-      return this.database.executeSql(`SELECT * from car WHERE brandId = ${brandId}`, [])
+      return this.database.executeSql(`SELECT * from car WHERE brandId = '${brandId}'`, [])
             .then((data)=>{
         console.log('se han encontrado coches');
               let cars = [];
@@ -222,36 +276,37 @@ export class DatabaseService {
       })
   }
 
-  addCar(name: string,inStock:boolean,type:string,image: string,brandId: number){
+  addCar(name: string,type:string,image: string,brandId: string, userId:string){
     return this.isReady()
     .then(()=>{
       return this.database.executeSql(`INSERT INTO car 
-        (name, inStock, type, image,isNew, brandId) VALUES (?, ?, ?, ?, 1, ?);`,
+        (name, type, image,isNew, brandId) VALUES (?,?, ?, 1, ?);`,
         //cast booleans to binary numbers
-        [name, inStock?1:0, type,image, brandId]);
-    });
+        [name,type,image, brandId]);
+    }).then(()=>{
+        return this.database.executeSql(`INSERT INTO users-car 
+        () VALUES ();`,
+          //cast booleans to binary numbers
+          [name,type,image, brandId]);
+      })
   }
 
-  modifyCar(name: string, inStock:boolean,type:string,image: string, id:number){
+  modifyCar( inStock:boolean, id:string){
     return this.isReady()
     .then(()=>{
-      return this.database.executeSql(`UPDATE todo 
-        SET name = ?, 
+      return this.database.executeSql(`UPDATE users-car
+        SET 
             inStock = ?,
-            type = ?,
-            isNew = 1,
-            image = ?
-           
         WHERE id = ?`,
         //cast booleans to binary numbers
-        [name, inStock?1:0,type,image, id]);
+        [inStock?1:0, id]);
     });
   }
 
-  removeCar(id:number){
+  removeCar(id:string){
     return this.isReady()
     .then(()=>{
-      return this.database.executeSql(`DELETE FROM car WHERE id = ${id}`, [])
+      return this.database.executeSql(`DELETE FROM car WHERE id = '${id}'`, [])
     })
   }
 

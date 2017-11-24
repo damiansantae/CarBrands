@@ -16,24 +16,40 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
   <ion-list>
-    <ion-card
+    <ion-item-sliding
       class="brand"
       text-wrap
-      *ngFor="let brand of brandService.brands" (tap)="goToBrand(brand)"
+      *ngFor="let brand of brandService.brands"
       (press)="selectBrand(brand)" [ngClass]="{'selected-brand': selectedBrand === brand}">
       <ion-item>
+        <ion-avatar item-start>
+          <img src="{{ brand.image }}">
+        </ion-avatar>
         <h2>{{ brand.name }}</h2>
 
       </ion-item>
+      <ion-item-options side="left">
+        <button ion-button color="secondary"
+                (tap)="brandService.setSeenBrand(brand)">
+          <ion-icon name="delete"></ion-icon>
+          Delete
+        </button>
 
+      </ion-item-options>
+      <ion-item-options side="right">
+        <button ion-button color="primary">
+          <ion-icon name="edit"></ion-icon>
+          Edit
+        </button>
+      </ion-item-options>
 
-      <div class="manage-record" padding>
+     <!-- <div class="manage-record" padding>
         <button
           ion-button
           text-center
           color="primary">
-          <!--(click)=""
-          -->Edit
+          &lt;!&ndash;(click)=""
+          &ndash;&gt;Edit
         </button>
 
         <button
@@ -42,7 +58,9 @@
           color="danger"
           (click)="brandService.removeBrand(brand)">Delete</button>
       </div>
-    </ion-card>
+      (tap)="goToBrand(brand)"-->
+
+    </ion-item-sliding>
   </ion-list>
 
   <ion-fab bottom right>
