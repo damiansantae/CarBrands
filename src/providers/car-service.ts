@@ -13,6 +13,7 @@ import {CarsModel} from "./CarsModel";
 export class CarService {
 
   public cars: CarsModel[] = [];
+  public newCars : CarsModel[] = [];
 
   constructor(public database: DatabaseService) {
 
@@ -44,6 +45,20 @@ export class CarService {
 
       }
     )
+  }
+
+  public getNewCars(){
+    return this.database.getNewCars()
+      .then((data:any) =>{
+        let localCars:CarsModel[] = [];
+        if(data){
+          for(let car of data){
+            console.log('metiendo brand con id '+car.id+' en array local ');
+          localCars.push(CarsModel.clone(car))
+          }
+        }
+        this.newCars = localCars;
+      });
   }
 
   toogleCar(car:CarsModel){

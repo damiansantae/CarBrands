@@ -27,7 +27,6 @@ export class TabsPage {
   logOut() {
     this._AUTH.logOut()
       .then((val) => {
-      alert("hola");
         this.navCtrl.setRoot(LoginPage);
 
       })

@@ -33,20 +33,22 @@ export class DatabaseService {
 
     return this.database.executeSql(
       `CREATE TABLE IF NOT EXISTS brand (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id TEXT PRIMARY KEY,
         name TEXT,
-        image TEXT
+        image TEXT,
+        isNew INTEGER
       );`
     ,{})
     .then(()=>{
       return this.database.executeSql(
       `CREATE TABLE IF NOT EXISTS car (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id TEXT PRIMARY KEY,
         name TEXT,
-        seen INTEGER,
-        brandId INTEGER,
+        inStock INTEGER,
         type TEXT,
         image TEXT,
+        isNew INTEGER,
+        brandId TEXT,
         FOREIGN KEY(brandId) REFERENCES brand(id)
         );`,{} )
     }).catch((err)=>console.log("error detected creating tables", err));
@@ -88,14 +90,40 @@ export class DatabaseService {
   }
 
   addBrand(name:string, image:string){
+    console.log('addBrand('+name+','+image+') database-service');
+    var uuid = this.getuid();
+    console.log(uuid);
     return this.isReady()
     .then(()=>{
-      return this.database.executeSql(`INSERT INTO brand(name,image) VALUES ('${name}','${image}');`, {}).then((result)=>{
+      console.log('isReady');
+      return this.database.executeSql(`INSERT INTO brand(name,image,isNew,id) VALUES ('${name}','${image}',1,'${uuid}');`, {}).then((result)=>{
         if(result.insertId){
+          console.log('insertao con exito');
           return this.getBrand(result.insertId);
         }
       })
     });
+  }
+
+  addBrandFromFire(name:string,image:string,id:string){
+    console.log('addBrandFromFire method');
+    console.log('adding bran with id '+id+' and name '+name);
+    return this.isReady()
+      .then(()=>{
+        console.log('isReady');
+        return this.database.executeSql(`INSERT INTO brand(name,image,isNew,id) VALUES ('${name}','${image}',0,'${id}');`, {}).then((result)=>{
+          if(result.insertId){
+            console.log('insertao con exito');
+            return this.getBrand(result.insertId);
+          }
+        })
+      });
+
+  }
+
+  getuid(){
+    return '_' + Math.random().toString(36).substr(2, 9);
+
   }
 
   getBrand(id:number){
@@ -118,6 +146,14 @@ export class DatabaseService {
     })
   }
 
+  deleteAllBrands(){
+    console.log('deleteAllBrands database-service');
+    return this.isReady()
+      .then(()=>{
+      return this.database.executeSql(`DELETE FROM brand`,[]);
+      })
+  }
+
 
   getCarsFromBrand(brandId:number){
     console.log('Tratando de extraer los coches pertenecientes a la marca cuyo id es'+brandId.valueOf());
@@ -133,7 +169,7 @@ export class DatabaseService {
                 let car = data.rows.item(i);
                 console.log('insertamos en array local el coche'+car.name);
                 //cast binary numbers back to booleans
-                car.seen = !!car.seen;
+                car.inStock = !!car.inStock;
                 cars.push(car);
               }
               return cars;
@@ -141,28 +177,74 @@ export class DatabaseService {
     })
   }
 
-  addCar(name: string,seen:boolean,type:string,image: string,brandId: number){
+  getNewBrands (){
+    console.log('getNewBrands database-service');
+    let brands = [];
+
+    return this.isReady()
+      .then( ()=> {
+        console.log ('db ready');
+        return this.database.executeSql('SELECT * from brand WHERE isNew = 1',[])
+          .then( (data)=>{
+
+            for(let i=0; i<data.rows.length; i++){
+              let brand = data.rows.item(i);
+              console.log('insertamos en array local el coche'+brand.name);
+              //cast binary numbers back to booleans
+              brands.push(brand);
+            }
+            return brands;
+          })
+
+      })
+
+  }
+
+  getNewCars(){
+    let cars = [];
+
+    return this.isReady()
+      .then( ()=> {
+        console.log ('db ready');
+        return this.database.executeSql('SELECT * from car WHERE isNew = 1',[])
+          .then( (data)=>{
+
+            for(let i=0; i<data.rows.length; i++){
+              let car = data.rows.item(i);
+              console.log('insertamos en array local el coche'+car.name);
+              //cast binary numbers back to booleans
+              car.inStock = !!car.inStock;
+              cars.push(car);
+            }
+            return cars;
+          })
+
+      })
+  }
+
+  addCar(name: string,inStock:boolean,type:string,image: string,brandId: number){
     return this.isReady()
     .then(()=>{
       return this.database.executeSql(`INSERT INTO car 
-        (name, seen, type, image, brandId) VALUES (?, ?, ?, ?,?);`,
+        (name, inStock, type, image,isNew, brandId) VALUES (?, ?, ?, ?, 1, ?);`,
         //cast booleans to binary numbers
-        [name, seen?1:0, type,image, brandId]);
+        [name, inStock?1:0, type,image, brandId]);
     });
   }
 
-  modifyCar(name: string, seen:boolean,type:string,image: string, id:number){
+  modifyCar(name: string, inStock:boolean,type:string,image: string, id:number){
     return this.isReady()
     .then(()=>{
       return this.database.executeSql(`UPDATE todo 
         SET name = ?, 
-            seen = ?,
+            inStock = ?,
             type = ?,
+            isNew = 1,
             image = ?
            
         WHERE id = ?`,
         //cast booleans to binary numbers
-        [name, seen?1:0,type,image, id]);
+        [name, inStock?1:0,type,image, id]);
     });
   }
 

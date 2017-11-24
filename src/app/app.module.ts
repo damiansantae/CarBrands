@@ -27,6 +27,7 @@ import {ResetPasswordPage} from "../pages/home/reset-pwd/reset-pwd";
 
 // for AngularFireDatabase
 import { AngularFireDatabase} from 'angularfire2/database/database';
+import {AngularFireDatabaseService} from "../providers/database-firebase-service";
 
 @NgModule({
   declarations: [
@@ -72,7 +73,7 @@ import { AngularFireDatabase} from 'angularfire2/database/database';
     CarService,
     SQLite,
    DatabaseService,
-    AngularFireDatabase
+    AngularFireDatabaseService
   ]
 })
 export class AppModule {}

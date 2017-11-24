@@ -1,0 +1,32 @@
+{
+  "brands": [null,
+    {
+      "cars": [
+        {
+          "name": "M3"
+        },
+        {
+          "name": "Z3"
+        },
+        {
+          "name": "X6"
+        }
+      ],
+      "name": "BMW"
+    },
+    {
+      "cars": [
+        {
+          "name": "Octavia"
+        },
+        {
+          "name": "Fabia"
+        },
+        {
+          "name": "Felicia"
+        }
+      ],
+      "name": "Skoda"
+    }
+  ]
+}
