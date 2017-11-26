@@ -4,7 +4,8 @@ export class BrandModel{
     public id:string,
     public image: string,
     public info : string,
-    public year : string
+    public year : string,
+    public type : string
   ){}
 
   static fromJson(data:any){
@@ -12,6 +13,6 @@ export class BrandModel{
       throw(new Error("Invalid argument: argument structure do not match with model"));
     }
 
-    return new BrandModel(data.name,data.image,data.info,data.year,data.id);
+    return new BrandModel(data.name,data.image,data.info,data.year,data.type,data.id);
   }
 }

@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { NavController, NavParams, ModalController, Platform, LoadingController } from 'ionic-angular';
 import {CarsModel} from "../../../providers/CarsModel";
 import {BrandModel} from "../../../providers/brandModel";
-import {AddCarModalPage} from "../../add-car-modal/add-car-modal";
 import {BrandService} from "../../../providers/brand-service";
 
 /*

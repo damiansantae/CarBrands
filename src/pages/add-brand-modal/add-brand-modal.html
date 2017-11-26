@@ -1,0 +1,130 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      {{ name }}
+    </ion-title>
+    <ion-buttons start>
+      <button
+        ion-button
+        (click)="closeModal()">
+           <span
+             ion-text
+             color="primary"
+             showWhen="ios">Cancel</span>
+        <ion-icon
+          name="md-close"
+          showWhen="android,windows"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content>
+
+
+  <form
+    [formGroup]="form"
+    (ngSubmit)="saveBrand(form.value)">
+
+    <ion-item-divider color="light">
+      <div *ngIf="!isEditable">
+        Add a new Brand
+      </div>
+
+      <div *ngIf="isEditable">
+       Edit this brand
+      </div>
+    </ion-item-divider>
+
+
+    <ion-item>
+      <ion-label stacked>Brand name:</ion-label>
+      <ion-input
+        type="text"
+        formControlName="name"
+        [(ngModel)]="brandName"></ion-input>
+    </ion-item>
+
+
+
+    <ion-item>
+         <span
+           ion-text
+           color="danger"
+           block
+           text-center
+           padding-top
+           padding-bottom
+           (click)="selectImage()">Select an image</span>
+      <input
+        type="hidden"
+        name="image"
+        formControlName="image"
+        [(ngModel)]="finalImage">
+      <img [src]="finalImage">
+    </ion-item>
+
+
+
+
+
+
+    <ion-item>
+      <ion-label stacked>Type</ion-label>
+      <ion-select
+        formControlName="type"
+        multiple="true"
+        [(ngModel)]="brandType">
+        <ion-option value="Automobile">Automobile</ion-option>
+        <ion-option value="Alimentation">Comedy</ion-option>
+        <ion-option value="Electronic Devices">Electronic Devices</ion-option>
+        <ion-option value="Clothes">Clothes</ion-option>
+
+      </ion-select>
+    </ion-item>
+
+
+    <ion-item>
+      <ion-label stacked>Summary:</ion-label>
+      <ion-textarea
+        rows="10"
+        formControlName="info"
+        [(ngModel)]="brandInfo"></ion-textarea>
+    </ion-item>
+
+
+    <ion-item>
+      <ion-label stacked>Year foundation:</ion-label>
+      <ion-input
+        type="text"
+        formControlName="year"
+        [(ngModel)]="brandYear"></ion-input>
+    </ion-item>
+
+
+    <ion-item>
+      <input
+        type="hidden"
+        name="brandID">
+      <button
+        ion-button
+        block
+        color="primary"
+        text-center
+        padding-top
+        padding-bottom
+        [disabled]="!form.valid">
+
+        <div *ngIf="!isEditable">
+          Add a new movie
+        </div>
+
+        <div *ngIf="isEditable">
+          Update this movie
+        </div>
+      </button>
+    </ion-item>
+
+  </form>
+</ion-content>

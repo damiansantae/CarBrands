@@ -25,9 +25,9 @@ export class BrandService {
     this.getUserBrands();
   }
 
-  public addBrand(name: string, image: string, info:string, year:string) {
+  public addBrand(name: string, image: string, info:string, year:string, type:string) {
     console.log('tratando de añadir ' + name);
-    return this.database.addBrand(name, image,info, year).then((brand) => {
+    return this.database.addBrand(name, image,info, year, type).then((brand) => {
       //update list of items, and then return the added list
       return this.getBrands().then(() => {
         return brand;
@@ -42,7 +42,7 @@ export class BrandService {
         if (data) {
           for (let brand of data) {
             console.log('metiendo brand con id ' + brand.id + ' en array local ');
-            let newBrand = new BrandModel(brand.name, brand.id, brand.image, brand.info,brand.year);
+            let newBrand = new BrandModel(brand.name, brand.id, brand.image, brand.info,brand.year,brand.type);
             console.log('se confirma que el nuevo brand tiene un id ' + newBrand.id);
             localBrands.push(newBrand);
           }
@@ -89,7 +89,7 @@ export class BrandService {
           for (let brand of data) {
 
             console.log('metiendo brand con id ' + brand.id + ' en array local ');
-            let newBrand = new BrandModel(brand.name, brand.id, brand.image, brand.info,brand.year);
+            let newBrand = new BrandModel(brand.name, brand.id, brand.image, brand.info,brand.year,brand.type);
             console.log('se confirma que el nuevo brand tiene un id ' + newBrand.id);
             localBrands.push(newBrand);
           }
@@ -153,10 +153,10 @@ export class BrandService {
       if (data) {
         for (let brand of data) {
           console.log('metiendo brand con id ' + brand.sqliteID + ' en array local y nombre ' + brand.name);
-          let newBrand = new BrandModel(brand.name, brand.sqliteID, brand.image,brand.info,brand.year);
+          let newBrand = new BrandModel(brand.name, brand.sqliteID, brand.image,brand.info,brand.year, brand.type);
           console.log('se confirma que el nuevo brand tiene un id ' + newBrand.id);
           localBrands.push(newBrand);
-          this.database.addBrandFromFire(newBrand.name,newBrand.image,newBrand.id, newBrand.info,newBrand.year);
+          this.database.addBrandFromFire(newBrand.name,newBrand.image,newBrand.info,newBrand.year,newBrand.type,newBrand.id);
         }
       }
       this.brands = localBrands;
@@ -171,7 +171,7 @@ export class BrandService {
       if (data) {
         for (let brand of data) {
           console.log('metiendo brand con id ' + brand.sqliteID + ' en array local y nombre ' + brand.name);
-          let newBrand = new BrandModel(brand.name, brand.sqliteID, brand.image, brand.info,brand.year);
+          let newBrand = new BrandModel(brand.name, brand.sqliteID, brand.image, brand.info,brand.year,brand.type);
           console.log('se confirma que el nuevo brand tiene un id ' + newBrand.id);
           localBrands.push(newBrand);
           this.database.addUserBrandFromFire(newBrand.id);

@@ -13,7 +13,7 @@ export const environment = {
     authDomain: "concesionario-164b9.firebaseapp.com",
     databaseURL: "https://concesionario-164b9.firebaseio.com",
     projectId: "concesionario-164b9",
-    storageBucket: "",
+    storageBucket: "gs://concesionario-164b9.appspot.com/",
     messagingSenderId: "296431850439"
   }
 };

@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Platform } from 'ionic-angular';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import {BrandModel} from "./brandModel";
 import * as firebase from "firebase";
 
 
@@ -138,29 +137,30 @@ console.log('inserting brand with id '+brandid+' into seen table of user with id
       });
   }
 
-  addBrand(name:string, image:string, info:string, year:string){
+  addBrand(name:string, image:string, info:string, year:string, type:string){
     console.log('addBrand('+name+','+image+') database-service');
     var uuid : string = this.getuid();
     console.log(uuid);
     return this.isReady()
     .then(()=>{
       console.log('isReady');
-      return this.database.executeSql(`INSERT INTO brand(name,image,info,year,isNew,id) VALUES ('${name}','${image}','${info}','${year}',1,'${uuid}');`, {}).then((result)=>{
+      return this.database.executeSql(
+        `INSERT INTO brand(name,image,info,year,type,isNew,id) VALUES ('${name}','${image}','${info}','${year}','${type}',1,'${uuid}');`, {}).then((result)=>{
         if(result.insertId){
-          console.log('insertao con exito');
+          console.log('insertado con exito');
           return this.getBrand(uuid);
         }
       })
     });
   }
 
-  addBrandFromFire(name:string,image:string,info:string, year:string, id:string){
+  addBrandFromFire(name:string,image:string,info:string, year:string,type:string, id:string){
     console.log('addBrandFromFire method');
     console.log('adding bran with id '+id+' and name '+name);
     return this.isReady()
       .then(()=>{
         console.log('isReady');
-        return this.database.executeSql(`INSERT INTO brand(name,image,info,year,isNew,id) VALUES ('${name}','${image}','${info}','${year}',0,'${id}');`, {}).then((result)=>{
+        return this.database.executeSql(`INSERT INTO brand(name,image,info,year,type,isNew,id) VALUES ('${name}','${image}','${info}','${year}','${type}',0,'${id}');`, {}).then((result)=>{
           if(result.insertId){
             console.log('insertao con exito');
             return this.getBrand(result.insertId);

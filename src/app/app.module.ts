@@ -16,7 +16,6 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { environment } from '../enviroments/environment';
 import {SQLite} from "@ionic-native/sqlite";
 import {CarsPage} from "../pages/home/cars/cars";
-import {AddCarModalPage} from "../pages/add-car-modal/add-car-modal";
 import {DatabaseService} from "../providers/database-service";
 import {BrandService} from "../providers/brand-service";
 import {BrandsPage} from "../pages/home/home/brand";
@@ -27,6 +26,11 @@ import {ResetPasswordPage} from "../pages/home/reset-pwd/reset-pwd";
 // for AngularFireDatabase
 import { AngularFireDatabase} from 'angularfire2/database/database';
 import {AngularFireDatabaseService} from "../providers/database-firebase-service";
+import {ImageProvider} from "../providers/image-service";
+import {PreloaderProvider} from "../providers/preloader-service";
+import {StorageService} from "../providers/storage-service";
+import {AddBrandModalPage} from "../pages/add-brand-modal/add-brand-modal";
+import {Camera} from "@ionic-native/camera";
 
 @NgModule({
   declarations: [
@@ -35,11 +39,12 @@ import {AngularFireDatabaseService} from "../providers/database-firebase-service
     ContactPage,
     BrandsPage,
     CarsPage,
-    AddCarModalPage,
+    AddBrandModalPage,
     LoginPage,
     TabsPage,
     SignupPage,
-    ResetPasswordPage
+    ResetPasswordPage,
+
   ],
   imports: [
     BrowserModule,
@@ -58,7 +63,7 @@ import {AngularFireDatabaseService} from "../providers/database-firebase-service
     ContactPage,
     BrandsPage,
     CarsPage,
-    AddCarModalPage,
+    AddBrandModalPage,
     TabsPage,
     SignupPage,
     ResetPasswordPage
@@ -71,7 +76,12 @@ import {AngularFireDatabaseService} from "../providers/database-firebase-service
     BrandService,
     SQLite,
    DatabaseService,
-    AngularFireDatabaseService
+    AngularFireDatabaseService,
+    ImageProvider,
+    PreloaderProvider,
+    StorageService,
+    Camera
+
   ]
 })
 export class AppModule {}

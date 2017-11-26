@@ -10,6 +10,8 @@ import {AngularFireDatabaseService} from "../../../providers/database-firebase-s
 import {LoginPage} from "../../login/login";
 import {AuthenticationProvider} from "../../../providers/authentication/authentication";
 import {TabsPage} from "../../tabs/tabs";
+import {ImageProvider} from "../../../providers/image-service";
+import {AddBrandModalPage} from "../../add-brand-modal/add-brand-modal";
 
 
 @Component({
@@ -28,7 +30,8 @@ export class BrandsPage {
               public DB_FIRE: AngularFireDatabaseService,
               private loadingCtrl: LoadingController,
               private _AUTH :AuthenticationProvider,
-              private appCrtl: App) {
+              private appCrtl: App,
+              private _IMG : ImageProvider) {
   }
 
 
@@ -42,10 +45,10 @@ export class BrandsPage {
     this.navCtrl.push(CarsPage, {brand});
   }
 
-  addNewBrand(name: string, image: string, info:string, year:string) {
+  addNewBrand(name: string, image: string, info:string, year:string,type:string) {
     let loader = this.loadingCtrl.create();
     loader.present().then(() => {
-      this.brandService.addBrand(name, image, info,year)
+      this.brandService.addBrand(name, image, info,year,type)
         .then(item => {
 
           console.log('añadido '+item.name+' con id '+item.id);
@@ -61,7 +64,12 @@ export class BrandsPage {
   }
 
   goToModalAddBrand() {
-    let modal = this.modalCtrl.create(' AddCarModalPage');
+    let modal = this.modalCtrl.create(AddBrandModalPage);
+    modal.onDidDismiss((data)=>{
+      if(data){
+       //TODO: Connetar añadido con base de datos
+      }
+    });
     modal.present();
   }
 
@@ -78,13 +86,20 @@ export class BrandsPage {
         },
         {
           name: 'image',
+          placeholder: 'url-image'
         },
         {
           name: 'info',
+          placeholder: 'Sumary of the brand'
         },
         {
           name: 'year',
+          placeholder: 'Year of foundation'
         },
+        {
+          name: 'type',
+          placeholder: 'Type of brand (sport,alimentation,car,etc.)'
+        }
 
       ],
       buttons: [
@@ -96,7 +111,7 @@ export class BrandsPage {
         {
           text: 'Add',
           handler: data => {
-            this.addNewBrand(data.name, data.image, data.info, data.year);
+            this.addNewBrand(data.name, data.image, data.info, data.year, data.type);
           }
         }
       ]
@@ -160,4 +175,6 @@ export class BrandsPage {
         alert(error.message);
       });
   }
+
+
 }
