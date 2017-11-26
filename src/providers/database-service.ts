@@ -3,6 +3,7 @@ import { Platform } from 'ionic-angular';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import {BrandModel} from "./brandModel";
+import * as firebase from "firebase";
 
 
 @Injectable()
@@ -45,10 +46,11 @@ export class DatabaseService {
     ,{})
 
       .then(()=>{
-        return this.database.executeSql(`CREATE TABLE IF NOT EXISTS users-brands (
+        return this.database.executeSql(`CREATE TABLE IF NOT EXISTS usersBrands (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         uid TEXT,
         brandid TEXT,
+        isNew INTEGER,
         FOREIGN KEY(brandid) REFERENCES brand(id)
         );`,{})
       })
@@ -89,23 +91,19 @@ export class DatabaseService {
       })
     })
   }
-  getBrandOfUser(uid){
+  getBrandsOfUser(uid){
     var userBrandsId = [];
-    var userBrands = [];
     return this.isReady()
       .then(()=>{
-        return this.database.executeSql(`SELECT * from brand WHERE uid = '${uid}';`, [])
+        return this.database.executeSql(`SELECT * from usersBrands WHERE uid = '${uid}';`, [])
           .then((data)=>{
-            let brands = [];
             for(let i=0; i<data.rows.length; i++){
-              console.log('relacion encontrada con id '+data.id);
               userBrandsId.push(data.rows.item(i).brandid);
+              console.log('id del brand encontrado: '+data.rows.item(i).brandid);
             }
-            for(let i=0; i<userBrandsId.length; i++){
-              userBrands.push(this.getBrand(userBrandsId[i]));
-            }
-            return userBrands;
+            return userBrandsId;
           })
+
       })
 
   }
@@ -115,7 +113,7 @@ console.log('inserting brand with id '+brandid+' into seen table of user with id
     return this.isReady()
       .then(()=>{
         console.log('isReady');
-        return this.database.executeSql(`INSERT INTO users-brands(uid,brandid) VALUES ('${uid}','${brandid}');`, {}).then((result)=>{
+        return this.database.executeSql(`INSERT INTO usersBrands(uid,brandid,isNew) VALUES ('${uid}','${brandid}',1);`, {}).then((result)=>{
           if(result.insertId){
             console.log('insertao con exito');
           }
@@ -123,26 +121,31 @@ console.log('inserting brand with id '+brandid+' into seen table of user with id
       });
   }
   deleteSeenBrandOutoCurrentUser(brandid, uid){
-    console.log('inserting brand with id '+brandid+' into seen table of user with id '+uid);
+    console.log('deleting brand with id '+brandid+' outo seen table of user with id '+uid);
     return this.isReady()
       .then(()=>{
         console.log('isReady');
-        return this.database.executeSql(`DELETE FROM users-brands WHERE uid = '${uid}' AND brandid = '${brandid}';`, {}).then((result)=>{
-          if(result.insertId){
-            console.log('insertao con exito');
-          }
-        })
+        return this.database.executeSql(`DELETE FROM usersBrands WHERE uid = '${uid}' AND brandid = '${brandid}';`, {});
+        });
+
+  }
+  deleteAllUserBrands(uid){
+    console.log('deletind all brands of the user '+uid);
+    return this.isReady()
+      .then(()=>{
+        console.log('isReady');
+        return this.database.executeSql(`DELETE FROM usersBrands WHERE uid = '${uid}';`, {})
       });
   }
 
-  addBrand(name:string, image:string){
+  addBrand(name:string, image:string, info:string, year:string){
     console.log('addBrand('+name+','+image+') database-service');
     var uuid : string = this.getuid();
     console.log(uuid);
     return this.isReady()
     .then(()=>{
       console.log('isReady');
-      return this.database.executeSql(`INSERT INTO brand(name,image,isNew,id) VALUES ('${name}','${image}',1,'${uuid}');`, {}).then((result)=>{
+      return this.database.executeSql(`INSERT INTO brand(name,image,info,year,isNew,id) VALUES ('${name}','${image}','${info}','${year}',1,'${uuid}');`, {}).then((result)=>{
         if(result.insertId){
           console.log('insertao con exito');
           return this.getBrand(uuid);
@@ -151,13 +154,13 @@ console.log('inserting brand with id '+brandid+' into seen table of user with id
     });
   }
 
-  addBrandFromFire(name:string,image:string,id:string){
+  addBrandFromFire(name:string,image:string,info:string, year:string, id:string){
     console.log('addBrandFromFire method');
     console.log('adding bran with id '+id+' and name '+name);
     return this.isReady()
       .then(()=>{
         console.log('isReady');
-        return this.database.executeSql(`INSERT INTO brand(name,image,isNew,id) VALUES ('${name}','${image}',0,'${id}');`, {}).then((result)=>{
+        return this.database.executeSql(`INSERT INTO brand(name,image,info,year,isNew,id) VALUES ('${name}','${image}','${info}','${year}',0,'${id}');`, {}).then((result)=>{
           if(result.insertId){
             console.log('insertao con exito');
             return this.getBrand(result.insertId);
@@ -165,6 +168,17 @@ console.log('inserting brand with id '+brandid+' into seen table of user with id
         })
       });
 
+  }
+  addUserBrandFromFire(brandid:string){
+    let uid = firebase.auth().currentUser.uid;
+    console.log('addUserBrandFromFire method');
+    console.log('adding user '+uid+'with brand '+brandid);
+    return this.isReady()
+      .then(()=>{
+        console.log('isReady');
+        return this.database.executeSql(`INSERT INTO usersBrands(uid,brandid,isNew) VALUES ('${uid}','${brandid}',0)`, {})
+          .catch((err)=>console.log("error inserting db", err));
+      });
   }
 
   getuid(){
@@ -184,10 +198,10 @@ console.log('inserting brand with id '+brandid+' into seen table of user with id
           console.log('se ha encontrado el brand con id '+brand.id);
           return brand
         }
-        return null;
       })
-    });
+    })
   }
+
 
   deleteBrand(id:string){
     console.log('deleteBrand database-srvice con id'+id);
@@ -253,7 +267,28 @@ console.log('inserting brand with id '+brandid+' into seen table of user with id
       })
 
   }
+  getUserNewBrands (uid){
+    console.log('getUserNewBrands database-service para usuario '+uid);
+    let userBrandsId = [];
 
+    return this.isReady()
+      .then( ()=> {
+        console.log ('db ready');
+        return this.database.executeSql(`SELECT * from usersBrands WHERE isNew = 1 AND uid = '${uid}';`,[])
+          .then((data)=>{
+            for(let i=0; i<data.rows.length; i++){
+              console.log('relacion encontrada con id '+data.rows.item(i).id);
+              userBrandsId.push(data.rows.item(i).brandid);
+              console.log('insertado en array local brand con id '+data.rows.item(i).brandid);
+            }
+            console.log('terminado bucle de inserccion dentro de userBrandsId');
+            return userBrandsId;
+
+          })
+
+      })
+
+  }
   getNewCars(){
     let cars = [];
 

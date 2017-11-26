@@ -13,42 +13,24 @@
 </ion-header>
 
 
-<ion-content padding>
+<ion-content>
+<div text-center="true" padding="5%">
+
+  <ion-img  width="100" height="100" src="{{brand.image}}"></ion-img>
   <h3>{{brand.name}}</h3>
-  <ion-list>
+  {{brand.info}}
 
-    <ion-item class="no-cars" *ngIf="!carService.cars || carService.cars.length == 0">
-      There are no cars register yet
-    </ion-item>
 
-    <ion-item-sliding *ngFor="let car of carService.cars">
-
-      <ion-item [ngStyle]="setCarsStyles(car)">
-        <ion-label>{{car.name}}</ion-label>
-        <ion-checkbox color="dark" [checked]="car.seen" (click)="toogleCar(car)"></ion-checkbox>
-      </ion-item>
-
-      <ion-item-options side="right">
-        <button ion-button color="dark" (click)="showEditCar(car)">
-          <ion-icon name="create"></ion-icon>
-          Edit
-        </button>
-        <button ion-button color="danger" (click)="removeCar(car)">
-          <ion-icon name="remove-circle"></ion-icon>
-          Remove
-          </button>
-      </ion-item-options>
-
-    </ion-item-sliding>
 
     <!-- <ion-item-divider *ngIf="(todoService.todos | doneTodosPipe).length > 0">Done tasks</ion-item-divider>
      <ion-item *ngFor="let todo of todoService.todos | doneTodosPipe" [ngStyle]="setTodoStyles(todo)">
        <ion-label color="light">{{todo.description}}</ion-label>
        <ion-checkbox color="light" [checked]="todo.isDone" (click)="toogleTodo(todo)"></ion-checkbox>
      </ion-item>-->
-  </ion-list>
+
+</div>
   <ion-fab bottom right>
-    <button ion-fab (click)="showAddCar()"><ion-icon name="add"></ion-icon></button>
+    <button ion-fab (click)="brandService.setSeenBrand(brand)"><ion-icon name="eye"></ion-icon></button>
   </ion-fab>
 </ion-content>
 

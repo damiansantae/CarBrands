@@ -6,6 +6,8 @@ import {AngularFireDatabaseService} from "../../providers/database-firebase-serv
 import {BrandModel} from "../../providers/brandModel";
 import {Component} from "@angular/core";
 import {CarsPage} from "../home/cars/cars";
+import {AuthenticationProvider} from "../../providers/authentication/authentication";
+import {LoginPage} from "../login/login";
 
 
 @Component({
@@ -22,12 +24,13 @@ export class AboutPage {
               public alertCtrl: AlertController,
               public brandService: BrandService,
               public DB_FIRE: AngularFireDatabaseService,
-              private loadingCtrl: LoadingController) {
+              private loadingCtrl: LoadingController,
+              private _AUTH : AuthenticationProvider) {
   }
 
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad ListsPage');
+    console.log('ionViewDidLoad UserBrandsPage');
   }
 
   goToBrand(brand: BrandModel) {
@@ -41,8 +44,24 @@ export class AboutPage {
     this.selectedBrand = null;
   }
 
-  refreshBrands(refresher: Refresher) {
+  refreshUserBrands(refresher: Refresher) {
+    console.log('onRefresh');
+    var deletedUserBrands = this.brandService.deletedUserBrands;
+    if(deletedUserBrands.length>0){
+      console.log('hay brands de este usuario borradas');
+      this.DB_FIRE.removeBrandsFromUser(deletedUserBrands);
+      this.brandService.deletedUserBrands = [];
+    }
+    this.brandService.getUserNewBrands().then(() => {
+      console.log('se han obtenido satisfactoriamente los nuevos brands');
+      this.DB_FIRE.addNewUserBrands(this.brandService.newUserBrands);
+      console.log('se han añadido los nuevos brands a firebase');
+      this.brandService.deleteAllUserBrands();
+      console.log('se han eliminado todos los brands');
+      this.brandService.setUserDataFromFireBase();
 
+    });
+    refresher.complete();
   }
 
   public removeUserSeenBrand(brand: BrandModel){
@@ -51,5 +70,16 @@ export class AboutPage {
 
     })
 
+  }
+
+  askForLogOut(){
+    this._AUTH.logOut()
+      .then((val) => {
+        this.navCtrl.setRoot(LoginPage);
+
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
   }
 }

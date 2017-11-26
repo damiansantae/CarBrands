@@ -1,12 +1,15 @@
 import { Component } from '@angular/core';
 import {
-  AlertController, LoadingController, ModalController, NavController, NavParams, Refresher,
+  AlertController, App, LoadingController, ModalController, NavController, NavParams, Refresher,
   Toast
 } from 'ionic-angular';
 import {BrandModel} from "../../../providers/brandModel";
 import {BrandService} from "../../../providers/brand-service";
 import {CarsPage} from "../cars/cars";
 import {AngularFireDatabaseService} from "../../../providers/database-firebase-service";
+import {LoginPage} from "../../login/login";
+import {AuthenticationProvider} from "../../../providers/authentication/authentication";
+import {TabsPage} from "../../tabs/tabs";
 
 
 @Component({
@@ -23,12 +26,14 @@ export class BrandsPage {
               public alertCtrl: AlertController,
               public brandService: BrandService,
               public DB_FIRE: AngularFireDatabaseService,
-              private loadingCtrl: LoadingController) {
+              private loadingCtrl: LoadingController,
+              private _AUTH :AuthenticationProvider,
+              private appCrtl: App) {
   }
 
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad ListsPage');
+    console.log('ionViewDidLoad BrandsPage');
   }
 
   goToBrand(brand: BrandModel) {
@@ -37,10 +42,10 @@ export class BrandsPage {
     this.navCtrl.push(CarsPage, {brand});
   }
 
-  addNewBrand(name: string, image: string) {
+  addNewBrand(name: string, image: string, info:string, year:string) {
     let loader = this.loadingCtrl.create();
     loader.present().then(() => {
-      this.brandService.addBrand(name, image)
+      this.brandService.addBrand(name, image, info,year)
         .then(item => {
 
           console.log('añadido '+item.name+' con id '+item.id);
@@ -73,7 +78,14 @@ export class BrandsPage {
         },
         {
           name: 'image',
-        }
+        },
+        {
+          name: 'info',
+        },
+        {
+          name: 'year',
+        },
+
       ],
       buttons: [
         {
@@ -84,7 +96,7 @@ export class BrandsPage {
         {
           text: 'Add',
           handler: data => {
-            this.addNewBrand(data.name, data.image);
+            this.addNewBrand(data.name, data.image, data.info, data.year);
           }
         }
       ]
@@ -138,5 +150,14 @@ export class BrandsPage {
 
     })
 
+  }
+  askForLogOut(){
+    this._AUTH.logOut()
+      .then((val) => {
+      this.appCrtl.getRootNav().setRoot(LoginPage);
+        })
+      .catch((error) => {
+        alert(error.message);
+      });
   }
 }

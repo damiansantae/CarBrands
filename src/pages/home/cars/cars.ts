@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, ModalController, Platform, LoadingController } from 'ionic-angular';
 import {CarsModel} from "../../../providers/CarsModel";
-import {CarService} from "../../../providers/car-service";
 import {BrandModel} from "../../../providers/brandModel";
 import {AddCarModalPage} from "../../add-car-modal/add-car-modal";
+import {BrandService} from "../../../providers/brand-service";
 
 /*
   Generated class for the Todos page.
@@ -25,9 +25,9 @@ export class CarsPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     public modalCtrl: ModalController,
-    public carService: CarService,
     public platform: Platform,
-    private loadingCtrl: LoadingController) {
+    private loadingCtrl: LoadingController,
+    private  brandService : BrandService) {
       this.brand = this.navParams.get('brand');
     console.log('Constructor pagina de cars perteneciente a '+this.brand.name+' cuyo id es '+this.brand.id);
     }
@@ -40,26 +40,26 @@ export class CarsPage {
   ionViewWillUnload(){
   }
 
-  setCarsStyles(item:CarsModel){
+ /* setCarsStyles(item:CarsModel){
     let styles = {
       'text-decoration': item.seen ? 'line-through' : 'none',
     };
     return styles;
   }
 
-  toogleCar(car:CarsModel){
+/!*  toogleCar(car:CarsModel){
     if(this.toogleCarTimeout)
       return;
     this.toogleCarTimeout = setTimeout(()=>{
       this.carService.toogleCar(car);
       this.toogleCarTimeout = null;
     }, this.platform.is('ios') ? 0 : 300);
-  }
-
+  }*!/
+/!*
   removeCar(car:CarsModel){
     this.carService.removeCar(car);
-  }
-
+  }*!/
+/!*
   addCar(car:CarsModel){
     console.log('add car metod');
     let loader = this.loadingCtrl.create();
@@ -67,7 +67,7 @@ export class CarsPage {
     this.carService.addCar(car)
     .then(()=>loader.dismiss())
     .catch(()=>loader.dismiss());
-  }
+  }*!/
 
   updateCar(originalCar:CarsModel, modifiedCar:CarsModel){
     let loader = this.loadingCtrl.create();
@@ -99,6 +99,6 @@ export class CarsPage {
         this.updateCar(car, data);
       }
     })
-  }
+  }*/
 
 }

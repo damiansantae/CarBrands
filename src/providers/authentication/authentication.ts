@@ -5,8 +5,7 @@ import {Observable} from 'rxjs/Observable';
 
 import {AngularFireAuth} from 'angularfire2/auth'
 import * as firebase from "firebase";
-
-//import * as firebase from 'firebase/app';
+import {LoginPage} from "../../pages/login/login";
 
 
 @Injectable()
@@ -15,7 +14,7 @@ export class AuthenticationProvider {
   public user: Observable<any>;
 
 
-  constructor(public http: Http, private _ANGFIRE: AngularFireAuth) {
+  constructor(public http: Http, private _ANGFIRE: AngularFireAuth,) {
     this.user = this._ANGFIRE.authState;
   }
 
@@ -46,6 +45,9 @@ export class AuthenticationProvider {
         });
     });
   }
+
+
+
 
   signupUser(email: string, password: string): Promise<any> {
     return firebase

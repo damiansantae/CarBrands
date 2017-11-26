@@ -19,7 +19,6 @@ import {CarsPage} from "../pages/home/cars/cars";
 import {AddCarModalPage} from "../pages/add-car-modal/add-car-modal";
 import {DatabaseService} from "../providers/database-service";
 import {BrandService} from "../providers/brand-service";
-import {CarService} from "../providers/car-service";
 import {BrandsPage} from "../pages/home/home/brand";
 import {SignupPage} from "../pages/home/signup/signup";
 import {ResetPasswordPage} from "../pages/home/reset-pwd/reset-pwd";
@@ -70,7 +69,6 @@ import {AngularFireDatabaseService} from "../providers/database-firebase-service
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     AuthenticationProvider,
     BrandService,
-    CarService,
     SQLite,
    DatabaseService,
     AngularFireDatabaseService

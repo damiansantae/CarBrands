@@ -1,14 +1,19 @@
 <ion-header>
+  <ion-navbar color="dark">
+    <ion-title>
+      Have you ever seen...
 
-  <ion-navbar color="primary">
-    <ion-buttons end *ngIf="selectedBrand != null">
-      <button ion-button (click)="removeSelectedBrand()">
-        <ion-icon name="trash"></ion-icon>
+    </ion-title>
+    <ion-buttons end>
+      <button
+        ion-button
+        color="primary"
+        (click)="askForLogOut()">
+
+        <ion-icon name="log-out"></ion-icon>
       </button>
     </ion-buttons>
-    <ion-title>Car Brands</ion-title>
   </ion-navbar>
-
 </ion-header>
 
 <ion-content padding>
@@ -22,17 +27,17 @@
       *ngFor="let brand of brandService.brands"
       (press)="selectBrand(brand)" [ngClass]="{'selected-brand': selectedBrand === brand}">
       <ion-item>
-        <ion-avatar item-start>
+        <ion-thumbnail item-start>
           <img src="{{ brand.image }}">
-        </ion-avatar>
+        </ion-thumbnail>
         <h2>{{ brand.name }}</h2>
-
+        <ion-note item-end (tap)="goToBrand(brand)">More info ></ion-note>
       </ion-item>
+
       <ion-item-options side="left">
         <button ion-button color="secondary"
                 (tap)="brandService.setSeenBrand(brand)">
-          <ion-icon name="delete"></ion-icon>
-          Delete
+          <ion-icon name="eye"> Seen</ion-icon>
         </button>
 
       </ion-item-options>
@@ -43,22 +48,6 @@
         </button>
       </ion-item-options>
 
-     <!-- <div class="manage-record" padding>
-        <button
-          ion-button
-          text-center
-          color="primary">
-          &lt;!&ndash;(click)=""
-          &ndash;&gt;Edit
-        </button>
-
-        <button
-          ion-button
-          text-center
-          color="danger"
-          (click)="brandService.removeBrand(brand)">Delete</button>
-      </div>
-      (tap)="goToBrand(brand)"-->
 
     </ion-item-sliding>
   </ion-list>

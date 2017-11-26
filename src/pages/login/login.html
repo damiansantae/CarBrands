@@ -1,7 +1,7 @@
 <ion-header>
-  <ion-navbar>
+  <ion-navbar color="dark">
     <ion-title>
-      Cars Stock
+     Have you ever seen..
       <ion-buttons end>
         <button
           *ngIf="!displayForm"
@@ -15,34 +15,33 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content class="center">
+<ion-content>
+
+  <div text-center="true" class="centered">
+    <form
+      *ngIf="displayForm"
+      [formGroup]="form"
+      (ngSubmit)="logIn()">
 
 
-  <form
-    *ngIf="displayForm"
-    [formGroup]="form"
-    (ngSubmit)="logIn()">
-
-
-      <ion-item >
-
-
+      <ion-item margin-bottom>
         <ion-label color="primary" floating>Email</ion-label>
-        <ion-input   type="email"
-                     formControlName="email" [class.invalid]="!form.controls.email.valid && blur">
+        <ion-input type="email"
+                   formControlName="email" [class.invalid]="!form.controls.email.valid && blur"
+                   value=" damiansantae@gmail.com">
 
-      damiansantae@gmail.com  </ion-input>
+        </ion-input>
 
       </ion-item>
 
 
-      <ion-item>
+      <ion-item margin-bottom>
         <ion-label color="primary" floating>Password</ion-label>
         <ion-input
           type="password"
-          formControlName="password" [class.invalid]="!form.controls.password.valid && blur">
-          123456
+          formControlName="password" [class.invalid]="!form.controls.password.valid && blur" value="123456">
         </ion-input>
+
       </ion-item>
 
 
@@ -50,24 +49,26 @@
         ion-button round
         color="primary"
         text-center
-        block [disabled]="!form.valid">Log In</button>
+        block [disabled]="!form.valid">Log In
+      </button>
 
 
-    <!--<p>{{ displayError }}</p>-->
-  </form>
+      <!--<p>{{ displayError }}</p>-->
+    </form>
 
-  <button ion-button block clear (click)="goToSignup()">
+
+  <button ion-button block clear (click)="goToSignup()" class="input">
     Create a new account
   </button>
 
-  <button ion-button block clear (click)="goToResetPwd()">
+  <button ion-button block clear (click)="goToResetPwd()" class="input">
     I forgot my password
   </button>
 
-
- <!-- <div *ngIf="!displayForm">
-    <h1 *ngIf="_AUTH.user | async">Welcome {{ (_AUTH.user | async)?.email }}!</h1>
-    <p>Logged in bro!</p>
-  </div>-->
+  </div>
+  <!-- <div *ngIf="!displayForm">
+     <h1 *ngIf="_AUTH.user | async">Welcome {{ (_AUTH.user | async)?.email }}!</h1>
+     <p>Logged in bro!</p>
+   </div>-->
 
 </ion-content>
