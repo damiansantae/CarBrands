@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar color="primary">
-    <ion-title>Cars List List</ion-title>
+    <ion-title>{{brand.name}}</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -17,21 +17,18 @@
 <div text-center="true" padding="5%">
 
   <ion-img  width="100" height="100" src="{{brand.image}}"></ion-img>
-  <h3>{{brand.name}}</h3>
-  {{brand.info}}
-
-
-
-    <!-- <ion-item-divider *ngIf="(todoService.todos | doneTodosPipe).length > 0">Done tasks</ion-item-divider>
-     <ion-item *ngFor="let todo of todoService.todos | doneTodosPipe" [ngStyle]="setTodoStyles(todo)">
-       <ion-label color="light">{{todo.description}}</ion-label>
-       <ion-checkbox color="light" [checked]="todo.isDone" (click)="toogleTodo(todo)"></ion-checkbox>
-     </ion-item>-->
 
 </div>
-  <ion-fab bottom right>
-    <button ion-fab (click)="brandService.setSeenBrand(brand)"><ion-icon name="eye"></ion-icon></button>
-  </ion-fab>
+  <div padding="5%">
+
+  <h4>Foundation: {{brand.year}}</h4>
+  <h4>Type: {{brand.type}}</h4>
+
+  {{brand.info}}
+
+  </div>
+
+
 </ion-content>
 
 

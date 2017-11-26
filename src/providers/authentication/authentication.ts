@@ -56,9 +56,12 @@ export class AuthenticationProvider {
       .then( newUser => {
         firebase
           .database()
-          .ref('/userProfile')
+          .ref('/users/')
           .child(newUser.uid)
-          .set({ email: email });
+          .set(
+            { email: email,
+            uid: newUser.uid}
+          );
       });
   }
   resetPassword(email: string): Promise<void> {

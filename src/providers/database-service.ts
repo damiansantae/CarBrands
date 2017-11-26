@@ -3,6 +3,7 @@ import { Platform } from 'ionic-angular';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import * as firebase from "firebase";
+import {errorObject} from "rxjs/util/errorObject";
 
 
 @Injectable()
@@ -156,7 +157,7 @@ console.log('inserting brand with id '+brandid+' into seen table of user with id
 
   addBrandFromFire(name:string,image:string,info:string, year:string,type:string, id:string){
     console.log('addBrandFromFire method');
-    console.log('adding bran with id '+id+' and name '+name);
+    console.log('adding brand with id '+id+' and name '+name);
     return this.isReady()
       .then(()=>{
         console.log('isReady');
@@ -165,7 +166,7 @@ console.log('inserting brand with id '+brandid+' into seen table of user with id
             console.log('insertao con exito');
             return this.getBrand(result.insertId);
           }
-        })
+        }).catch((err)=>console.log("error inserting db", err));
       });
 
   }
@@ -223,27 +224,6 @@ console.log('inserting brand with id '+brandid+' into seen table of user with id
   }
 
 
-  getCarsFromBrand(brandId:string){
-    console.log('Tratando de extraer los coches pertenecientes a la marca cuyo id es'+brandId.valueOf());
-    return this.isReady()
-    .then(()=>{
-      console.log('db ready');
-      return this.database.executeSql(`SELECT * from car WHERE brandId = '${brandId}'`, [])
-            .then((data)=>{
-        console.log('se han encontrado coches');
-              let cars = [];
-              for(let i=0; i<data.rows.length; i++){
-
-                let car = data.rows.item(i);
-                console.log('insertamos en array local el coche'+car.name);
-                //cast binary numbers back to booleans
-                car.inStock = !!car.inStock;
-                cars.push(car);
-              }
-              return cars;
-            })
-    })
-  }
 
   getNewBrands (){
     console.log('getNewBrands database-service');
@@ -289,27 +269,7 @@ console.log('inserting brand with id '+brandid+' into seen table of user with id
       })
 
   }
-  getNewCars(){
-    let cars = [];
 
-    return this.isReady()
-      .then( ()=> {
-        console.log ('db ready');
-        return this.database.executeSql('SELECT * from car WHERE isNew = 1',[])
-          .then( (data)=>{
-
-            for(let i=0; i<data.rows.length; i++){
-              let car = data.rows.item(i);
-              console.log('insertamos en array local el coche'+car.name);
-              //cast binary numbers back to booleans
-              car.inStock = !!car.inStock;
-              cars.push(car);
-            }
-            return cars;
-          })
-
-      })
-  }
 
   addCar(name: string,type:string,image: string,brandId: string, userId:string){
     return this.isReady()
@@ -326,23 +286,30 @@ console.log('inserting brand with id '+brandid+' into seen table of user with id
       })
   }
 
-  modifyCar( inStock:boolean, id:string){
-    return this.isReady()
-    .then(()=>{
-      return this.database.executeSql(`UPDATE users-car
-        SET 
-            inStock = ?,
-        WHERE id = ?`,
-        //cast booleans to binary numbers
-        [inStock?1:0, id]);
-    });
-  }
 
-  removeCar(id:string){
+  modifyBrand(name:string, image:string, info:string, year:string, type:string, brandid:string){
+    console.log('dentro de modifyBrand database-service');
+    console.log('id: '+brandid);
+    console.log('name: '+name);
+    console.log('type: '+type);
+    console.log('year: '+year);
+
     return this.isReady()
-    .then(()=>{
-      return this.database.executeSql(`DELETE FROM car WHERE id = '${id}'`, [])
-    })
+      .then(()=>{
+        return this.database.executeSql(`UPDATE brand
+        SET 
+            name = '${name}',
+            image = '${image}',
+            info = '${info}',
+            year = '${year}',
+            type = '${type}',
+            isNew = 1
+            
+        WHERE id = '${brandid}';`,
+
+          []);
+      })
+      .catch((err)=>console.log("error inserting db", err));
   }
 
 

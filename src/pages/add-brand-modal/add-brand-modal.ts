@@ -60,7 +60,7 @@ export class AddBrandModalPage {
       this.brandYear = brand.year;
       this.brandType = brand.type;
       this.brandId= brand.id;
-
+      this.finalImage= this.brandImage;
       this.isEditable = true;
     }
   }
@@ -77,27 +77,32 @@ export class AddBrandModalPage {
 
 
     if (this.isEditable) {
+      console.log('modo edicion');
 
       if (image !== this.brandImage) {
+        console.log('la imagen NO es la misma que la anterior');
         this.storageService.uploadImage(image)
           .then((snapshot: any) => {
             let uploadedImage: any = snapshot.downloadURL;
-
-//TODO: llamar a metodo updateBrand sqlite
-
-              /*.then((data) => {
+this.brandService.updateBrand(name,uploadedImage,info,year,type,this.brandId)
+  .then((data) => {
                 this._LOADER.hidePreloader();
-              });*/
-
+              });
           });
       }
       else {
+        console.log('la imagen es la misma que la anterior');
+        this.brandService.updateBrand(name,image,info,year,type,this.brandId)
+          .then((data) => {
+            this._LOADER.hidePreloader();
+          });
 
-        //TODO :Llamar a metodo updateBrand sqlite
+
       }
 
     }
     else {
+      console.log('modo adicion');
       this.storageService.uploadImage(image)
         .then((snapshot: any) => {
           let uploadedImage: any = snapshot.downloadURL;

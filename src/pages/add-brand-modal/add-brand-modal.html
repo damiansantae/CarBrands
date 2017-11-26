@@ -1,7 +1,7 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="dark">
     <ion-title>
-      {{ name }}
+      {{ title }}
     </ion-title>
     <ion-buttons start>
       <button
@@ -62,6 +62,7 @@
         name="image"
         formControlName="image"
         [(ngModel)]="finalImage">
+
       <img [src]="finalImage">
     </ion-item>
 
@@ -74,7 +75,6 @@
       <ion-label stacked>Type</ion-label>
       <ion-select
         formControlName="type"
-        multiple="true"
         [(ngModel)]="brandType">
         <ion-option value="Automobile">Automobile</ion-option>
         <ion-option value="Alimentation">Comedy</ion-option>
@@ -117,11 +117,11 @@
         [disabled]="!form.valid">
 
         <div *ngIf="!isEditable">
-          Add a new movie
+          Add a new brand
         </div>
 
         <div *ngIf="isEditable">
-          Update this movie
+          Update this brand
         </div>
       </button>
     </ion-item>

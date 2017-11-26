@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {
   AlertController, App, LoadingController, ModalController, NavController, NavParams, Refresher,
   Toast
@@ -12,7 +12,7 @@ import {AuthenticationProvider} from "../../../providers/authentication/authenti
 import {TabsPage} from "../../tabs/tabs";
 import {ImageProvider} from "../../../providers/image-service";
 import {AddBrandModalPage} from "../../add-brand-modal/add-brand-modal";
-
+import * as firebase from "firebase";
 
 @Component({
   selector: 'page-home',
@@ -21,6 +21,8 @@ import {AddBrandModalPage} from "../../add-brand-modal/add-brand-modal";
 export class BrandsPage {
 
   public selectedBrand: BrandModel = null;
+  private currentUserEmail;
+
 
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
@@ -29,9 +31,11 @@ export class BrandsPage {
               public brandService: BrandService,
               public DB_FIRE: AngularFireDatabaseService,
               private loadingCtrl: LoadingController,
-              private _AUTH :AuthenticationProvider,
-              private appCrtl: App,
-              private _IMG : ImageProvider) {
+              private _AUTH: AuthenticationProvider,
+              private appCrtl: App) {
+
+    this.currentUserEmail = firebase.auth().currentUser.email;
+
   }
 
 
@@ -45,18 +49,18 @@ export class BrandsPage {
     this.navCtrl.push(CarsPage, {brand});
   }
 
-  addNewBrand(name: string, image: string, info:string, year:string,type:string) {
+  addNewBrand(name: string, image: string, info: string, year: string, type: string) {
     let loader = this.loadingCtrl.create();
     loader.present().then(() => {
-      this.brandService.addBrand(name, image, info,year,type)
+      this.brandService.addBrand(name, image, info, year, type)
         .then(item => {
 
-          console.log('añadido '+item.name+' con id '+item.id);
+          console.log('añadido ' + item.name + ' con id ' + item.id);
           //let brand = BrandModel.fromJson(item);
           //this.goToBrand(brand);
           loader.dismiss();
         }, error => {
-          console.log('error al añadir el nuevo elemento')
+          console.log('error al añadir el nuevo elemento');
           loader.dismiss();
 
         });
@@ -65,9 +69,9 @@ export class BrandsPage {
 
   goToModalAddBrand() {
     let modal = this.modalCtrl.create(AddBrandModalPage);
-    modal.onDidDismiss((data)=>{
-      if(data){
-       //TODO: Connetar añadido con base de datos
+    modal.onDidDismiss((data) => {
+      if (data) {
+
       }
     });
     modal.present();
@@ -142,7 +146,7 @@ export class BrandsPage {
   refreshBrands(refresher: Refresher) {
     console.log('onRefresh');
     var deletedBrands = this.brandService.deletedBrands;
-    if(deletedBrands.length>0){
+    if (deletedBrands.length > 0) {
       this.DB_FIRE.removeBrand(deletedBrands);
       this.brandService.deletedBrands = [];
     }
@@ -159,22 +163,30 @@ export class BrandsPage {
 
   }
 
-  public removeBrand(brand: BrandModel){
-    this.brandService.removeBrand(brand).then(()=>{
+  public removeBrand(brand: BrandModel) {
+    this.brandService.removeBrand(brand).then(() => {
       console.log(brand + ' eliminado con éxito');
 
     })
 
   }
-  askForLogOut(){
+
+  askForLogOut() {
     this._AUTH.logOut()
       .then((val) => {
-      this.appCrtl.getRootNav().setRoot(LoginPage);
-        })
+        this.appCrtl.getRootNav().setRoot(LoginPage);
+      })
       .catch((error) => {
         alert(error.message);
       });
   }
 
+  editBrand(brand)
+  {
+    let params = { brand: brand, isEdited: true },
+      modal  = this.modalCtrl.create(AddBrandModalPage, params);
+
+    modal.present();
+  }
 
 }

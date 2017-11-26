@@ -107,7 +107,10 @@ for (var key in jason){
       database.ref('/brands/'+brand.id).set({
         name : brand.name,
         image : brand.image,
-        sqliteID : brand.id
+        sqliteID : brand.id,
+        info : brand.info,
+        year : brand.year,
+        type : brand.type
     })
     }
   }

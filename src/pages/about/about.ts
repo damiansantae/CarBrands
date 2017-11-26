@@ -1,5 +1,5 @@
 import {
-  AlertController, LoadingController, ModalController, NavController, NavParams, Refresher
+  AlertController, App, LoadingController, ModalController, NavController, NavParams, Refresher
 } from 'ionic-angular';
 import {BrandService} from "../../providers/brand-service";
 import {AngularFireDatabaseService} from "../../providers/database-firebase-service";
@@ -25,7 +25,8 @@ export class AboutPage {
               public brandService: BrandService,
               public DB_FIRE: AngularFireDatabaseService,
               private loadingCtrl: LoadingController,
-              private _AUTH : AuthenticationProvider) {
+              private _AUTH : AuthenticationProvider,
+              private appCrtl : App) {
   }
 
 
@@ -72,11 +73,10 @@ export class AboutPage {
 
   }
 
-  askForLogOut(){
+  askForLogOut() {
     this._AUTH.logOut()
       .then((val) => {
-        this.navCtrl.setRoot(LoginPage);
-
+        this.appCrtl.getRootNav().setRoot(LoginPage);
       })
       .catch((error) => {
         alert(error.message);

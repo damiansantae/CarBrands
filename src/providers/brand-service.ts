@@ -35,6 +35,16 @@ export class BrandService {
     });
   }
 
+  public updateBrand(name: string, image: string, info:string, year:string, type:string , brandId:string) {
+    console.log('tratando de modificar en updateBrand para ' + brandId);
+    return this.database.modifyBrand(name, image,info, year, type,brandId).then((brand) => {
+      //update list of items, and then return the added list
+      return this.getBrands().then(() => {
+        return brand;
+      })
+    });
+  }
+
   public getBrands() {
     return this.database.getBrands()
       .then((data: any) => {

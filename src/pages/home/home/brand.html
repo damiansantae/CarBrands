@@ -17,6 +17,11 @@
 </ion-header>
 
 <ion-content padding>
+  <div text-center *ngIf="brandService.brands.length==0">
+    slide-down to download Brands<br>
+    <ion-icon name="arrow-down"> </ion-icon>
+
+  </div>
   <ion-refresher (ionRefresh)="refreshBrands($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
@@ -26,33 +31,42 @@
       text-wrap
       *ngFor="let brand of brandService.brands"
       (press)="selectBrand(brand)" [ngClass]="{'selected-brand': selectedBrand === brand}">
+
       <ion-item>
         <ion-thumbnail item-start>
           <img src="{{ brand.image }}">
         </ion-thumbnail>
         <h2>{{ brand.name }}</h2>
         <ion-note item-end (tap)="goToBrand(brand)">More info ></ion-note>
+
+        <button *ngIf="currentUserEmail == 'damiansantae@gmail.com'"
+          ion-button
+          text-center
+          color="danger"
+          (click)="removeBrand(brand)" >Delete
+        </button>
+
       </ion-item>
 
       <ion-item-options side="left">
         <button ion-button color="secondary"
                 (tap)="brandService.setSeenBrand(brand)">
-          <ion-icon name="eye"> Seen</ion-icon>
+          <ion-icon name="eye"></ion-icon>
         </button>
 
       </ion-item-options>
-      <ion-item-options side="right">
-        <button ion-button color="primary">
-          <ion-icon name="edit"></ion-icon>
-          Edit
+
+      <ion-item-options side="right" *ngIf="currentUserEmail == 'damiansantae@gmail.com'">
+        <button ion-button color="primary" (click)="editBrand(brand)">
+          <ion-icon name="create"></ion-icon>
         </button>
       </ion-item-options>
-
 
     </ion-item-sliding>
   </ion-list>
 
-  <ion-fab bottom right>
+
+  <ion-fab bottom right *ngIf="currentUserEmail == 'damiansantae@gmail.com'">
     <!--<button ion-fab (click)="showAddBrand()">
       <ion-icon name="add"></ion-icon>
     </button>-->
@@ -61,6 +75,8 @@
       <ion-icon name="add"></ion-icon>
     </button>
   </ion-fab>
+
+
 </ion-content>
 
 
