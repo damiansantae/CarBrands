@@ -5,9 +5,9 @@ import {
   LoadingController,
   AlertController } from 'ionic-angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import {AuthenticationProvider} from "../../../providers/authentication/authentication";
-import {EmailValidator} from "../../../validators/email";
-import {TabsPage} from "../../tabs/tabs";
+import {AuthenticationProvider} from "../../providers/authentication";
+import {EmailValidator} from "../../validators/email";
+import {TabsPage} from "../tabs/tabs";
 
 
 

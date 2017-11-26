@@ -1,9 +1,8 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, AlertController } from 'ionic-angular';
-import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-import {AuthenticationProvider} from "../../../providers/authentication/authentication";
-import {EmailValidator} from "../../../validators/email";
-
+import {Component} from '@angular/core';
+import {IonicPage, NavController, AlertController} from 'ionic-angular';
+import {FormBuilder, Validators, FormGroup} from '@angular/forms';
+import {AuthenticationProvider} from "../../providers/authentication";
+import {EmailValidator} from "../../validators/email";
 
 
 @Component({
@@ -13,20 +12,18 @@ import {EmailValidator} from "../../../validators/email";
 export class ResetPasswordPage {
   public resetPasswordForm: FormGroup;
 
-  constructor(
-    public navCtrl: NavController,
-    public authProvider: AuthenticationProvider,
-    public formBuilder: FormBuilder,
-    public alertCtrl: AlertController
-  ) {
+  constructor(public navCtrl: NavController,
+              public authProvider: AuthenticationProvider,
+              public formBuilder: FormBuilder,
+              public alertCtrl: AlertController) {
     this.resetPasswordForm = formBuilder.group({
       email: ['',
         Validators.compose([Validators.required, EmailValidator.isValid])],
     });
   }
 
-  resetPassword(){
-    if (!this.resetPasswordForm.valid){
+  resetPassword() {
+    if (!this.resetPasswordForm.valid) {
       console.log(this.resetPasswordForm.value);
     } else {
       this.authProvider.resetPassword(this.resetPasswordForm.value.email)
@@ -37,7 +34,9 @@ export class ResetPasswordPage {
               {
                 text: "Ok",
                 role: 'cancel',
-                handler: () => { this.navCtrl.pop(); }
+                handler: () => {
+                  this.navCtrl.pop();
+                }
               }
             ]
           });
@@ -47,7 +46,7 @@ export class ResetPasswordPage {
           let errorMessage: string = error.message;
           let errorAlert = this.alertCtrl.create({
             message: errorMessage,
-            buttons: [{ text: "Ok", role: 'cancel' }]
+            buttons: [{text: "Ok", role: 'cancel'}]
           });
           errorAlert.present();
         });

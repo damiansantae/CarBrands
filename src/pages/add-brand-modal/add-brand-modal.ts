@@ -29,14 +29,13 @@ export class AddBrandModalPage {
   public isEditable: boolean = false;
 
 
-  constructor(public navCtrl: NavController,
-              public params: NavParams,
+  constructor(public params: NavParams,
               private _FB: FormBuilder,
               private _IMG: ImageProvider,
               public viewCtrl: ViewController,
               private _LOADER: PreloaderProvider,
               private storageService: StorageService,
-              private brandService : BrandService) {
+              private brandService: BrandService) {
 
 
     this.form = _FB.group({
@@ -48,8 +47,6 @@ export class AddBrandModalPage {
     });
 
 
-
-
     if (params.get('isEdited')) {
       let brand = params.get('brand');
 
@@ -59,8 +56,8 @@ export class AddBrandModalPage {
       this.brandImage = brand.image;
       this.brandYear = brand.year;
       this.brandType = brand.type;
-      this.brandId= brand.id;
-      this.finalImage= this.brandImage;
+      this.brandId = brand.id;
+      this.finalImage = this.brandImage;
       this.isEditable = true;
     }
   }
@@ -84,15 +81,15 @@ export class AddBrandModalPage {
         this.storageService.uploadImage(image)
           .then((snapshot: any) => {
             let uploadedImage: any = snapshot.downloadURL;
-this.brandService.updateBrand(name,uploadedImage,info,year,type,this.brandId)
-  .then((data) => {
+            this.brandService.updateBrand(name, uploadedImage, info, year, type, this.brandId)
+              .then((data) => {
                 this._LOADER.hidePreloader();
               });
           });
       }
       else {
         console.log('la imagen es la misma que la anterior');
-        this.brandService.updateBrand(name,image,info,year,type,this.brandId)
+        this.brandService.updateBrand(name, image, info, year, type, this.brandId)
           .then((data) => {
             this._LOADER.hidePreloader();
           });
@@ -108,7 +105,7 @@ this.brandService.updateBrand(name,uploadedImage,info,year,type,this.brandId)
           let uploadedImage: any = snapshot.downloadURL;
 
 
-          this.brandService.addBrand(name,uploadedImage,info,year,type)
+          this.brandService.addBrand(name, uploadedImage, info, year, type)
 
             .then((data) => {
               this._LOADER.hidePreloader();

@@ -4,41 +4,35 @@ import {BrandModel} from "./brandModel";
 import * as firebase from "firebase";
 import {AngularFireDatabaseService} from "./database-firebase-service";
 
-/*
-  Generated class for the ListsService provider.
 
-  See https://angular.io/docs/ts/latest/guide/dependency-injection.html
-  for more info on providers and Angular 2 DI.
-*/
 @Injectable()
 export class BrandService {
 
   public brands: BrandModel[] = [];
-  public userBrands : BrandModel[] = [];
+  public userBrands: BrandModel[] = [];
   public newBrands: BrandModel[] = [];
-  public newUserBrands : BrandModel[] = [];
+  public newUserBrands: BrandModel[] = [];
   public deletedBrands: BrandModel[] = [];
-  public deletedUserBrands : BrandModel[] =[];
+  public deletedUserBrands: BrandModel[] = [];
 
   constructor(public database: DatabaseService, public FB_DB: AngularFireDatabaseService) {
     this.getBrands();
     this.getUserBrands();
   }
 
-  public addBrand(name: string, image: string, info:string, year:string, type:string) {
+  public addBrand(name: string, image: string, info: string, year: string, type: string) {
     console.log('tratando de añadir ' + name);
-    return this.database.addBrand(name, image,info, year, type).then((brand) => {
-      //update list of items, and then return the added list
+    return this.database.addBrand(name, image, info, year, type).then((brand) => {
+
       return this.getBrands().then(() => {
         return brand;
       })
     });
   }
 
-  public updateBrand(name: string, image: string, info:string, year:string, type:string , brandId:string) {
+  public updateBrand(name: string, image: string, info: string, year: string, type: string, brandId: string) {
     console.log('tratando de modificar en updateBrand para ' + brandId);
-    return this.database.modifyBrand(name, image,info, year, type,brandId).then((brand) => {
-      //update list of items, and then return the added list
+    return this.database.modifyBrand(name, image, info, year, type, brandId).then((brand) => {
       return this.getBrands().then(() => {
         return brand;
       })
@@ -52,7 +46,7 @@ export class BrandService {
         if (data) {
           for (let brand of data) {
             console.log('metiendo brand con id ' + brand.id + ' en array local ');
-            let newBrand = new BrandModel(brand.name, brand.id, brand.image, brand.info,brand.year,brand.type);
+            let newBrand = new BrandModel(brand.name, brand.id, brand.image, brand.info, brand.year, brand.type);
             console.log('se confirma que el nuevo brand tiene un id ' + newBrand.id);
             localBrands.push(newBrand);
           }
@@ -62,25 +56,23 @@ export class BrandService {
       });
   }
 
-  getUserBrands(){
-    return this.database.getBrandsOfUser(firebase.auth().currentUser.uid).then(brandsId=>{
-      console.log('dentro de then tras getBrandsOfUser');
+  getUserBrands() {
+    return this.database.getBrandsOfUser(firebase.auth().currentUser.uid).then(brandsId => {
       let localBrands: BrandModel[] = [];
       if (brandsId) {
-        console.log('existen varios brandsId, exactamente: '+brandsId.length);
+        console.log('existen varios brandsId, exactamente: ' + brandsId.length);
         for (let brandid of brandsId) {
-          for (let i=0; i<this.brands.length;i++){
-            console.log('comparando '+brandid+' con '+this.brands[i].id);
-            if(brandid == this.brands[i].id){
+          for (let i = 0; i < this.brands.length; i++) {
+            console.log('comparando ' + brandid + ' con ' + this.brands[i].id);
+            if (brandid == this.brands[i].id) {
               console.log('COINCIDEN');
-              console.log('se inserta la marca '+this.brands[i].name+' en array local');
+              console.log('se inserta la marca ' + this.brands[i].name + ' en array local');
               localBrands.push(this.brands[i]);
 
-            }else{
+            } else {
               console.log('NO HAY COINCIDENCIA');
             }
           }
-          console.log('SALIMOS DEL FOR');
 
         }
         console.log('insertando array local dentro array userBrands');
@@ -99,7 +91,7 @@ export class BrandService {
           for (let brand of data) {
 
             console.log('metiendo brand con id ' + brand.id + ' en array local ');
-            let newBrand = new BrandModel(brand.name, brand.id, brand.image, brand.info,brand.year,brand.type);
+            let newBrand = new BrandModel(brand.name, brand.id, brand.image, brand.info, brand.year, brand.type);
             console.log('se confirma que el nuevo brand tiene un id ' + newBrand.id);
             localBrands.push(newBrand);
           }
@@ -108,6 +100,7 @@ export class BrandService {
 
       });
   }
+
   public getUserNewBrands() {
     console.log('getUserNewBrands brand-service');
     return this.database.getUserNewBrands(firebase.auth().currentUser.uid)
@@ -116,14 +109,14 @@ export class BrandService {
         let localBrands: BrandModel[] = [];
         if (data) {
           for (let brandid of data) {
-            for (let i=0; i<this.brands.length;i++){
-              console.log('comparando '+brandid+' con '+this.brands[i].id);
-              if(brandid == this.brands[i].id){
+            for (let i = 0; i < this.brands.length; i++) {
+              console.log('comparando ' + brandid + ' con ' + this.brands[i].id);
+              if (brandid == this.brands[i].id) {
                 console.log('COINCIDEN');
-                console.log('se inserta la marca '+this.brands[i].name+' en array local');
+                console.log('se inserta la marca ' + this.brands[i].name + ' en array local');
                 localBrands.push(this.brands[i]);
 
-              }else{
+              } else {
                 console.log('NO HAY COINCIDENCIA');
               }
             }
@@ -139,17 +132,18 @@ export class BrandService {
     console.log('removeBrand brand-service');
     return this.database.deleteBrand(brand.id)
       .then(() => {
-      console.log("añadiendo " + brand.name + "con id " + brand.id + " al array de eliminados");
-      this.deletedBrands.push(brand);
-      return this.getBrands();
+        console.log("añadiendo " + brand.name + "con id " + brand.id + " al array de eliminados");
+        this.deletedBrands.push(brand);
+        return this.getBrands();
 
-    });
+      });
   }
 
   public deleteAllBrands() {
     console.log('deleteBrands brand-service');
     this.database.deleteAllBrands();
   }
+
   public deleteAllUserBrands() {
     console.log('deleteAllUserBrandsTable brand-service');
     this.database.deleteAllUserBrands(firebase.auth().currentUser.uid);
@@ -163,10 +157,10 @@ export class BrandService {
       if (data) {
         for (let brand of data) {
           console.log('metiendo brand con id ' + brand.sqliteID + ' en array local y nombre ' + brand.name);
-          let newBrand = new BrandModel(brand.name, brand.sqliteID, brand.image,brand.info,brand.year, brand.type);
+          let newBrand = new BrandModel(brand.name, brand.sqliteID, brand.image, brand.info, brand.year, brand.type);
           console.log('se confirma que el nuevo brand tiene un id ' + newBrand.id);
           localBrands.push(newBrand);
-          this.database.addBrandFromFire(newBrand.name,newBrand.image,newBrand.info,newBrand.year,newBrand.type,newBrand.id);
+          this.database.addBrandFromFire(newBrand.name, newBrand.image, newBrand.info, newBrand.year, newBrand.type, newBrand.id);
         }
       }
       this.brands = localBrands;
@@ -181,7 +175,7 @@ export class BrandService {
       if (data) {
         for (let brand of data) {
           console.log('metiendo brand con id ' + brand.sqliteID + ' en array local y nombre ' + brand.name);
-          let newBrand = new BrandModel(brand.name, brand.sqliteID, brand.image, brand.info,brand.year,brand.type);
+          let newBrand = new BrandModel(brand.name, brand.sqliteID, brand.image, brand.info, brand.year, brand.type);
           console.log('se confirma que el nuevo brand tiene un id ' + newBrand.id);
           localBrands.push(newBrand);
           this.database.addUserBrandFromFire(newBrand.id);
@@ -190,19 +184,19 @@ export class BrandService {
       this.userBrands = localBrands;
     });
   }
-  public setSeenBrand(brand: BrandModel){
+
+  public setSeenBrand(brand: BrandModel) {
     console.log('setSeenBrand brand-service');
     console.log(firebase.auth().currentUser.uid);
     return this.database.insertSeenBrandIntoCurrentUser(brand.id, firebase.auth().currentUser.uid)
-      .then(()=>{
-          //update list of items, and then return the added list
-          return this.getUserBrands();
+      .then(() => {
+        return this.getUserBrands();
 
       })
 
   }
 
-  removeBrandForUser(brand : BrandModel){
+  removeBrandForUser(brand: BrandModel) {
     console.log('setSeenBrand brand-service');
     console.log(firebase.auth().currentUser.uid);
     return this.database.deleteSeenBrandOutoCurrentUser(brand.id, firebase.auth().currentUser.uid)

@@ -19,7 +19,7 @@
 <ion-content padding>
   <div text-center *ngIf="brandService.brands.length==0">
     slide-down to download Brands<br>
-    <ion-icon name="arrow-down"> </ion-icon>
+    <ion-icon name="arrow-down"></ion-icon>
 
   </div>
   <ion-refresher (ionRefresh)="refreshBrands($event)">
@@ -40,10 +40,10 @@
         <ion-note item-end (tap)="goToBrand(brand)">More info ></ion-note>
 
         <button *ngIf="currentUserEmail == 'damiansantae@gmail.com'"
-          ion-button
-          text-center
-          color="danger"
-          (click)="removeBrand(brand)" >Delete
+                ion-button
+                text-center
+                color="danger"
+                (click)="removeBrand(brand)">Delete
         </button>
 
       </ion-item>
@@ -67,9 +67,6 @@
 
 
   <ion-fab bottom right *ngIf="currentUserEmail == 'damiansantae@gmail.com'">
-    <!--<button ion-fab (click)="showAddBrand()">
-      <ion-icon name="add"></ion-icon>
-    </button>-->
 
     <button ion-fab (click)="goToModalAddBrand()">
       <ion-icon name="add"></ion-icon>

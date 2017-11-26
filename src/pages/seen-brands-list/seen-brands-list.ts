@@ -1,32 +1,28 @@
 import {
-  AlertController, App, LoadingController, ModalController, NavController, NavParams, Refresher
+  App, NavController, Refresher
 } from 'ionic-angular';
 import {BrandService} from "../../providers/brand-service";
 import {AngularFireDatabaseService} from "../../providers/database-firebase-service";
 import {BrandModel} from "../../providers/brandModel";
 import {Component} from "@angular/core";
-import {CarsPage} from "../home/cars/cars";
-import {AuthenticationProvider} from "../../providers/authentication/authentication";
+import {BrandDetailPage} from "../brand/brand-detail/brand-detail";
+import {AuthenticationProvider} from "../../providers/authentication";
 import {LoginPage} from "../login/login";
 
 
 @Component({
   selector: 'page-about',
-  templateUrl: 'about.html'
+  templateUrl: 'seen-brands-list.html'
 })
 export class AboutPage {
 
   public selectedBrand: BrandModel = null;
 
   constructor(public navCtrl: NavController,
-              public navParams: NavParams,
-              private modalCtrl: ModalController,
-              public alertCtrl: AlertController,
               public brandService: BrandService,
               public DB_FIRE: AngularFireDatabaseService,
-              private loadingCtrl: LoadingController,
-              private _AUTH : AuthenticationProvider,
-              private appCrtl : App) {
+              private _AUTH: AuthenticationProvider,
+              private appCrtl: App) {
   }
 
 
@@ -34,21 +30,11 @@ export class AboutPage {
     console.log('ionViewDidLoad UserBrandsPage');
   }
 
-  goToBrand(brand: BrandModel) {
-    console.log('ir a lista de coches del brand cuyo nombre es ' + brand.name + ' y su id es ' + brand.id);
-    this.navCtrl.push(CarsPage, {brand});
-  }
-
-
-  removeSelectedBrand() {
-    this.brandService.removeBrand(this.selectedBrand);
-    this.selectedBrand = null;
-  }
 
   refreshUserBrands(refresher: Refresher) {
     console.log('onRefresh');
     var deletedUserBrands = this.brandService.deletedUserBrands;
-    if(deletedUserBrands.length>0){
+    if (deletedUserBrands.length > 0) {
       console.log('hay brands de este usuario borradas');
       this.DB_FIRE.removeBrandsFromUser(deletedUserBrands);
       this.brandService.deletedUserBrands = [];
@@ -65,8 +51,8 @@ export class AboutPage {
     refresher.complete();
   }
 
-  public removeUserSeenBrand(brand: BrandModel){
-    this.brandService.removeBrandForUser(brand).then(()=>{
+  public removeUserSeenBrand(brand: BrandModel) {
+    this.brandService.removeBrandForUser(brand).then(() => {
       console.log(brand + ' eliminado con éxito');
 
     })

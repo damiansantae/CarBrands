@@ -2,15 +2,7 @@
   <ion-navbar color="dark">
     <ion-title>
      Have you ever seen..
-      <ion-buttons end>
-        <button
-          *ngIf="!displayForm"
-          ion-button
-          color="primary"
-          (click)="logOut()">
-          Log Out
-        </button>
-      </ion-buttons>
+
     </ion-title>
   </ion-navbar>
 </ion-header>
@@ -66,9 +58,6 @@
   </button>
 
   </div>
-  <!-- <div *ngIf="!displayForm">
-     <h1 *ngIf="_AUTH.user | async">Welcome {{ (_AUTH.user | async)?.email }}!</h1>
-     <p>Logged in bro!</p>
-   </div>-->
+
 
 </ion-content>

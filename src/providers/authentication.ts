@@ -2,10 +2,8 @@ import {Injectable} from '@angular/core';
 import {Http} from '@angular/http';
 import 'rxjs/add/operator/map';
 import {Observable} from 'rxjs/Observable';
-
 import {AngularFireAuth} from 'angularfire2/auth'
 import * as firebase from "firebase";
-import {LoginPage} from "../../pages/login/login";
 
 
 @Injectable()
@@ -47,23 +45,24 @@ export class AuthenticationProvider {
   }
 
 
-
-
   signupUser(email: string, password: string): Promise<any> {
     return firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
-      .then( newUser => {
+      .then(newUser => {
         firebase
           .database()
           .ref('/users/')
           .child(newUser.uid)
           .set(
-            { email: email,
-            uid: newUser.uid}
+            {
+              email: email,
+              uid: newUser.uid
+            }
           );
       });
   }
+
   resetPassword(email: string): Promise<void> {
     return firebase.auth().sendPasswordResetEmail(email);
   }

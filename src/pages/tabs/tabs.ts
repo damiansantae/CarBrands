@@ -1,10 +1,7 @@
 import { Component } from '@angular/core';
 
-import { AboutPage } from '../about/about';
-import { ContactPage } from '../contact/contact';
-import {NavController} from "ionic-angular";
-import {LoginPage} from "../login/login";
-import {BrandsPage} from "../home/home/brand";
+import { AboutPage } from '../seen-brands-list/seen-brands-list';
+import {BrandsPage} from "../brand/master-list/brand-master-list";
 
 
 @Component({

@@ -25,8 +25,7 @@ export class StorageService {
 
       parseUpload.on('state_changed', (_snapshot) =>
         {
-          // We could log the progress here IF necessary
-          //console.log('snapshot progess ' + _snapshot);
+          console.log('snapshot progess ' + _snapshot);
         },
         (_err) =>
         {
